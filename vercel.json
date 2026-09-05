@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/products",
+      "destination": "/api/products.js"
+    }
+  ]
+}
