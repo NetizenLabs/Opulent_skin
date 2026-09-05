@@ -36,13 +36,13 @@ export default function Navbar() {
 
           <nav className={`nav-menu ${mobileOpen ? 'active' : ''}`}>
             <div className="mobile-nav-header">
-              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800 }}>MENU</span>
+              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800 }}>NAVIGATION</span>
               <button className="close-nav-btn" onClick={closeMenu}>✕</button>
             </div>
             <ul className="nav-links">
               <li><NavLink to="/" onClick={closeMenu}>Home</NavLink></li>
               <li><NavLink to="/products" onClick={closeMenu}>Products</NavLink></li>
-              <li><NavLink to="/about" onClick={closeMenu}>About</NavLink></li>
+              <li><NavLink to="/about" onClick={closeMenu}>About Us</NavLink></li>
               <li><NavLink to="/contact" onClick={closeMenu}>Contact</NavLink></li>
               <li><NavLink to="/admin" className="mobile-admin-link" onClick={closeMenu}>Admin Panel</NavLink></li>
             </ul>
@@ -56,7 +56,12 @@ export default function Navbar() {
           </div>
         </div>
       </header>
-      <div className={`nav-backdrop ${mobileOpen ? 'active' : ''}`} onClick={closeMenu} />
+
+      {/* Backdrop: clicking outside closes the drawer */}
+      <div 
+        className={`nav-backdrop ${mobileOpen ? 'active' : ''}`} 
+        onClick={closeMenu} 
+      />
     </>
   );
 }
