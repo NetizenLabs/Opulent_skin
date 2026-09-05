@@ -1,3 +1,4 @@
+// Inside js/app.js:
 import { products } from './data/products.js';
 import { ProductCard } from './components/ProductCard.js';
 import { addToCart, updateQuantity, renderCartUI, generateWhatsAppOrderUrl } from './cart.js';
