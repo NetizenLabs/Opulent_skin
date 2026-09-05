@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opulent Skin | Admin Operations Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    .admin-wrapper {
+      max-width: 1200px;
+      margin: 40px auto 80px auto;
+      padding: 0 28px;
+    }
+    .admin-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-subtle);
+    }
+    .grid-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .full-width {
+      grid-column: span 2;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .admin-table th, .admin-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+    }
+    .admin-table th {
+      background: var(--bg-surface-subtle);
+      font-weight: 700;
+    }
+    .thumb-img {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+    .btn-delete-row {
+      background: none;
+      border: none;
+      color: var(--brand-terracotta);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-delete-row:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-logo">
+        <svg viewBox="0 0 240 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="20" r="12" stroke="#C5A880" stroke-width="2"/>
+          <circle cx="16" cy="20" r="6" fill="#141312"/>
+          <text x="36" y="26" font-family="'Syne', sans-serif" font-weight="800" font-size="18" fill="#141312" letter-spacing="-0.5">OPULENT SKIN</text>
+        </svg>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Storefront</a></li>
+        <li><a href="products.html">Catalog</a></li>
+        <li><a href="admin.html" class="active">Admin Dashboard</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="admin-wrapper">
+      <div style="margin-bottom:28px;">
+        <h1 style="font-size:2.4rem;">Catalog & Inventory Manager</h1>
+        <p style="color:var(--text-muted);">Manage real-time inventory on Vercel. Added products populate immediately on customer devices.</p>
+      </div>
+
+      <!-- Add Product Form -->
+      <div class="admin-card">
+        <h2 style="font-size:1.4rem; margin-bottom:20px;">Add New Formulation</h2>
+        <form id="admin-add-form" onsubmit="submitNewProduct(event)">
+          <div class="grid-form">
+            <div class="form-group">
+              <label>Product Title *</label>
+              <input type="text" id="p-title" class="form-control" required placeholder="e.g. 2% Salicylic Acid BHA Serum">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="p-category" class="form-control" required>
+                <option value="skin">Skin Care</option>
+                <option value="hair">Hair Care</option>
+                <option value="makeup">Makeup</option>
+                <option value="nails">Nails</option>
+                <option value="hand">Hand Care</option>
+                <option value="neck">Neck Care</option>
+                <option value="jewelry">Jewelry</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price (PKR) *</label>
+              <input type="number" id="p-price" class="form-control" required placeholder="2450">
+            </div>
+            <div class="form-group">
+              <label>Volume / Size *</label>
+              <input type="text" id="p-volume" class="form-control" required placeholder="e.g. 30ml Dropper / 50g Jar">
+            </div>
+            <div class="form-group">
+              <label>Badge Label *</label>
+              <input type="text" id="p-badge" class="form-control" required placeholder="e.g. Best Seller / New">
+            </div>
+            <div class="form-group">
+              <label>Product Image URL *</label>
+              <input type="url" id="p-image" class="form-control" required placeholder="https://images.unsplash.com/...">
+            </div>
+            <div class="form-group full-width">
+              <label>Formula Highlights & Description *</label>
+              <textarea id="p-desc" class="form-control" rows="3" required placeholder="Key ingredients, percentage, and benefits..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary-action" style="max-width:240px; margin-top:12px;">
+            Publish Product Live
+          </button>
+        </form>
+      </div>
+
+      <!-- Live Inventory Listing -->
+      <div class="admin-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2 style="font-size:1.4rem;">Live Inventory (<span id="count-indicator">0</span> items)</h2>
+          <button onclick="fetchLiveInventory()" style="background:none; border:1px solid var(--border-color); padding:6px 14px; border-radius:var(--radius-full); cursor:pointer; font-weight:700;">
+            Refresh Table
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchLiveInventory() {
+      const tbody = document.getElementById('inventory-tbody');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Fetching live inventory from Vercel server...</td></tr>';
+      
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        document.getElementById('count-indicator').innerText = data.length;
+
+        tbody.innerHTML = data.map(p => `
+          <tr>
+            <td><img src="${p.image}" class="thumb-img" alt="${p.title}"></td>
+            <td><strong>${p.title}</strong><br><small style="color:var(--text-muted);">${p.volume}</small></td>
+            <td><span style="text-transform:uppercase; font-size:0.75rem; font-weight:700;">${p.category}</span></td>
+            <td><strong>PKR ${p.price.toLocaleString()}</strong></td>
+            <td><button class="btn-delete-row" onclick="removeProduct('${p.id}')">Delete</button></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Failed to load live data. Ensure Vercel deployment is active.</td></tr>';
+      }
+    }
+
+    async function submitNewProduct(e) {
+      e.preventDefault();
+      const productPayload = {
+        id: 'ops-' + Date.now().toString().slice(-4),
+        title: document.getElementById('p-title').value.trim(),
+        category: document.getElementById('p-category').value,
+        price: Number(document.getElementById('p-price').value),
+        volume: document.getElementById('p-volume').value.trim(),
+        badge: document.getElementById('p-badge').value.trim(),
+        image: document.getElementById('p-image').value.trim(),
+        description: document.getElementById('p-desc').value.trim(),
+        oldPrice: null
+      };
+
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(productPayload)
+        });
+
+        if (res.ok) {
+          alert(`Successfully published "${productPayload.title}"!`);
+          document.getElementById('admin-add-form').reset();
+          fetchLiveInventory();
+        } else {
+          alert("Server error occurred while adding product.");
+        }
+      } catch (err) {
+        alert("Network error: Could not connect to /api/products");
+      }
+    }
+
+    async function removeProduct(id) {
+      if (confirm("Remove this item from the live storefront?")) {
+        try {
+          const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            fetchLiveInventory();
+          }
+        } catch (err) {
+          alert("Could not delete item.");
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchLiveInventory);
+  </script>
+</body>
+</html>
