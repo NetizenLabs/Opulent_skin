@@ -2,18 +2,16 @@
   let activeCategory = 'all';
   window.products = [];
 
-  async function loadLiveProducts() {
+  async function loadStoreProducts() {
     try {
       const res = await fetch('/api/products');
       if (res.ok) {
         window.products = await res.json();
       } else {
-        throw new Error("Failed to load from API");
+        throw new Error();
       }
-    } catch (err) {
-      // Fallback to local cache if offline
-      const fallback = localStorage.getItem('opulent_products');
-      window.products = fallback ? JSON.parse(fallback) : [];
+    } catch (e) {
+      window.products = [];
     }
     renderCatalog();
   }
@@ -106,7 +104,7 @@
     setupSidebar();
     setupEvents();
     if (window.Cart) window.Cart.renderCartUI();
-    loadLiveProducts();
+    loadStoreProducts();
   }
 
   if (document.readyState === 'loading') {
