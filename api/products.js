@@ -1,4 +1,4 @@
-// In-memory persistent state for the deployment instance with baseline seed catalog
+// Baseline persistent seed data
 let catalog = [
   {
     id: "ops-001",
@@ -58,39 +58,34 @@ let catalog = [
 ];
 
 export default async function handler(req, res) {
-  // CORS Headers
-  res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-  );
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // GET: Fetch all products
+  // GET: Return current live catalog
   if (req.method === "GET") {
     return res.status(200).json(catalog);
   }
 
-  // POST: Add new product
+  // POST: Add new product from Admin Panel
   if (req.method === "POST") {
     const newProduct = req.body;
     if (!newProduct || !newProduct.title || !newProduct.price) {
-      return res.status(400).json({ error: "Title and price are required." });
+      return res.status(400).json({ error: "Missing required product details" });
     }
     catalog.unshift(newProduct);
-    return res.status(201).json({ message: "Product published successfully", product: newProduct });
+    return res.status(201).json({ message: "Product created successfully", product: newProduct });
   }
 
   // DELETE: Remove product by ID
   if (req.method === "DELETE") {
     const { id } = req.query;
     catalog = catalog.filter(p => p.id !== id);
-    return res.status(200).json({ message: "Product removed", id });
+    return res.status(200).json({ message: "Product deleted", id });
   }
 
   return res.status(405).json({ error: "Method not allowed" });
