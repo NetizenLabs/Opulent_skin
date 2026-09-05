@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import CartDrawer from './components/CartDrawer';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Admin from './pages/Admin';
+import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
+import CartDrawer from './components/CartDrawer.jsx';
+import Home from './pages/Home.jsx';
+import Products from './pages/Products.jsx';
+import About from './pages/About.jsx';
+import Contact from './pages/Contact.jsx';
+import Admin from './pages/Admin.jsx';
 
 export default function App() {
   return (
